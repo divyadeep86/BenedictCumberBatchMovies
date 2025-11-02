@@ -31,6 +31,7 @@ real-world scenario).
    ```properties
    TMDB_API_KEY=your_tmdb_api_key_here
 3. Expose the key to code via BuildConfig:
+    ```properties
    defaultConfig {
    val tmdbApiKey: String = project.findProperty("TMDB_API_KEY") as? String ?: ""
    buildConfigField("String", "TMDB_API_KEY", "\"$tmdbApiKey\"")
@@ -87,24 +88,27 @@ Paging integrates naturally with MVVM & RecyclerView; a single-item fetch (detai
 
 ## 📂 Project Structure
 
-app/
-├─ data/
-│ ├─ model/ # MovieDto, MovieResponse (kotlinx.serialization)
-│ ├─ remote/ # Retrofit API, MoviePagingSource
-│ └─ repository/ # MovieRepository, safeApiCall
-├─ domain/
-│ ├─ model/ # Movie (domain model)
-│ ├─ common/ # DataState (Loading/Success/Error)
-│ └─ usecase/ # GetMoviesUseCase
-└─ presentation/
-├─ mvvm/ # Movie list (XML + RecyclerView + Paging)
-└─ mvi/ # Movie detail (Compose + Intents + State)
+````
+    app/
+    ├─ data/
+    │ ├─ model/ # MovieDto, MovieResponse (kotlinx.serialization)
+    │ ├─ remote/ # Retrofit API, MoviePagingSource
+    │ └─ repository/ # MovieRepository, safeApiCall
+    ├─ domain/
+    │ ├─ model/ # Movie (domain model)
+    │ ├─ common/ # DataState (Loading/Success/Error)
+    │ └─ usecase/ # GetMoviesUseCase
+    └─ presentation/
+    ├─ mvvm/ # Movie list (XML + RecyclerView + Paging)
+    └─ mvi/ # Movie detail (Compose + Intents + State)
+````
 
 ## 🧠 Error Handling
 
 All API calls are wrapped in a unified `safeApiCall`, mapping exceptions to readable messages via
 `DataState.Error`:
 
+```
 - `UnknownHostException` → **“No internet connection.”**
 - `IOException` → **“Network error. Please try again.”**
 - `HttpException`
@@ -113,7 +117,7 @@ All API calls are wrapped in a unified `safeApiCall`, mapping exceptions to read
     - `429` → **“Too many requests, please retry later.”**
     - `5xx` → **“Server unreachable.”**
 - `SerializationException` → **“Couldn’t read the server response.”**
-
+```
 ### UI consumption
 
 - **List:** shows `LoadState.Error` from Paging (retry button in footer).
