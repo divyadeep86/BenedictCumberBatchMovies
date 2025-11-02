@@ -142,9 +142,7 @@ All API calls are wrapped in a unified `safeApiCall`, mapping exceptions to read
 - Offline cache with **Room** + `RemoteMediator`
 - Migrate list screen to **Compose**
 - **Shimmer** placeholders, empty states, better theming (dark mode)
-- **CI/CD** (GitHub Actions) for build, tests, lint
 - **Localization** for messages and UI strings
-- **Accessibility** polish (content descriptions, contrast, larger targets)
 
 ---
 
