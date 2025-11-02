@@ -8,6 +8,7 @@ import com.vh.benedictcumberbatchmovies.presentation.mvi.state.MovieDetailState
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -23,6 +24,7 @@ import org.junit.Test
 class MovieDetailViewModelTest {
 
     // UnconfinedTestDispatcher ensures launched coroutines run immediately in tests
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val testDispatcher = UnconfinedTestDispatcher()
 
     // Mocked use case injected into ViewModel
@@ -32,6 +34,7 @@ class MovieDetailViewModelTest {
     private lateinit var vm: MovieDetailViewModel
 
     // Set Dispatchers.Main to our test dispatcher before each test
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
@@ -39,6 +42,7 @@ class MovieDetailViewModelTest {
     }
 
     // Restore the real Main dispatcher after each test
+    @OptIn(ExperimentalCoroutinesApi::class)
     @After
     fun tearDown() {
         Dispatchers.resetMain()

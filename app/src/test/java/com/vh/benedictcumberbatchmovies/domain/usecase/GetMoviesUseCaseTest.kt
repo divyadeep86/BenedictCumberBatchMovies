@@ -9,6 +9,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -23,12 +24,14 @@ class GetMoviesUseCaseTest {
     private val testDispatcher = StandardTestDispatcher()
 
     // @Before runs before each @Test; set Main dispatcher to our test dispatcher
+    @OptIn(ExperimentalCoroutinesApi::class)
     @org.junit.Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
     }
 
     // @After runs after each @Test; restore the real Main dispatcher
+    @OptIn(ExperimentalCoroutinesApi::class)
     @org.junit.After
     fun tearDown() {
         Dispatchers.resetMain()
