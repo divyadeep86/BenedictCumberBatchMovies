@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BenedictCumberbatchMovies</string>
+    <string name="movie_poster">Movie Poster</string>
+    <string name="something_went_wrong">Something went wrong</string>
+</resources>
