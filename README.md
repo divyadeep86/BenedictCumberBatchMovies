@@ -165,6 +165,10 @@ All API calls are wrapped in a unified `safeApiCall`, mapping exceptions to read
     - **Detail (MVI):** `LoadMovie` intent updates `MovieDetailState` accordingly.
     - **List (MVVM):** exposes `Flow<PagingData<Movie>>` (smoke test using `PagingData.from(...)`).
 
+```bash
+./gradlew testDebugUnitTest
+```
+
 ## 🙌 Credits
 
 - Data: **TMDB (The Movie Database)**
