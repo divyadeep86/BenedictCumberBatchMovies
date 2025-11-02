@@ -1,4 +1,4 @@
-# CumberMovies (MVVM + MVI + Paging 3)
+# BenedictCumberBatchMovies (MVVM + MVI + Paging 3)
 
 This is a small movie browser that lists **Benedict Cumberbatch** movies using the **TMDB API**.  
 It demonstrates two common Android architectures **side-by-side**:
