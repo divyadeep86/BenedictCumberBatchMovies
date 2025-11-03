@@ -151,7 +151,6 @@ All API calls are wrapped in a unified `safeApiCall`, mapping exceptions to read
 - **Paging tests** are heavy; kept to **smoke tests** with `PagingData.from(...)`.
 - **Coroutine timing** in tests; used test dispatchers + terminal state collection.
 - Centralized **error mapping** simplified VM logic and UI updates.
-- Maintaining **XML + Compose** side-by-side to reflect real migration paths.
 
 ## 🧪 Testing
 
