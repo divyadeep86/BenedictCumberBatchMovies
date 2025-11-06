@@ -1,6 +1,5 @@
 package com.vh.benedictcumberbatchmovies.presentation.mvi
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,10 +37,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import com.vh.benedictcumberbatchmovies.R
 import com.vh.benedictcumberbatchmovies.domain.model.Movie
 import com.vh.benedictcumberbatchmovies.presentation.mvi.state.MovieDetailState
 
@@ -119,14 +120,18 @@ private fun MovieContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         val screenHeight = LocalConfiguration.current.screenHeightDp
-        Image(
-            painter = rememberAsyncImagePainter(model = movie.posterUrl),
-            contentDescription = movie.title,
-            contentScale = ContentScale.FillBounds,
+        AsyncImage(
+            model = movie.posterUrl,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
-                .height((screenHeight * 0.6f).dp)
+                .height((screenHeight * 0.6f).dp),
+            contentDescription = "AsyncImage",
+            placeholder = painterResource(id = R.drawable.baseline_local_movies_24),
+            error = painterResource(id = R.drawable.baseline_broken_image_24),
+            fallback = painterResource(id = R.drawable.baseline_local_movies_24)
         )
+
         Column(
             modifier = Modifier.padding(horizontal = 12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -140,14 +145,8 @@ private fun MovieContent(
         }
 
         // --- Similar Movies section ---
-        Text(
-            text = "Similar movies",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-        )
-
-        SimilarMoviesRow(
-            similar = similarMovies,
+        SimilarSection(
+            similarMovies = similarMovies,
             onItemClick = onItemClick
         )
         Spacer(
@@ -155,6 +154,59 @@ private fun MovieContent(
                 .height(20.dp)
                 .fillMaxWidth()
         )
+    }
+}
+
+@Composable
+fun SimilarSection(
+    similarMovies: LazyPagingItems<Movie>,
+    onItemClick: (Movie) -> Unit
+) {
+    val loadState = similarMovies.loadState
+    val isInitialLoading = loadState.refresh is LoadState.Loading
+    val isInitialError = loadState.refresh is LoadState.Error
+    val endReached = (loadState.append as? LoadState.NotLoading)?.endOfPaginationReached == true
+    val showEmpty =
+        !isInitialLoading && !isInitialError && endReached && similarMovies.itemCount == 0
+
+    Text(
+        text = "Similar movies",
+        style = MaterialTheme.typography.titleLarge,
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+    )
+
+    when {
+        isInitialLoading -> {
+            // first page loading
+            CircularProgressIndicator(Modifier.padding(12.dp))
+        }
+
+        isInitialError -> {
+            // first page failed
+            val e = (loadState.refresh as LoadState.Error).error
+            Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    e.localizedMessage ?: "Couldn't load similar movies.",
+                    color = MaterialTheme.colorScheme.error
+                )
+                Spacer(Modifier.width(8.dp))
+                Button(onClick = { similarMovies.retry() }) { Text("Retry") }
+            }
+        }
+
+        showEmpty -> {
+            // not at start: only after initial load completes & we know there are 0 items
+            Text(
+                text = "No similar movies found",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+            )
+        }
+
+        else -> {
+            // render the row
+            SimilarMoviesRow(similarMovies, onItemClick)
+        }
     }
 }
 
@@ -243,15 +295,23 @@ internal fun SimilarMovieCard(
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         // Rounded poster
-        Image(
-            painter = rememberAsyncImagePainter(model = movie.posterUrl),
-            contentDescription = movie.title,
+        AsyncImage(
+            model = movie.posterUrl,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .aspectRatio(2f / 3f)                     // poster aspect
-                .clip(RoundedCornerShape(12.dp))           // rounded corners
+                .clip(RoundedCornerShape(12.dp)),
+            contentDescription = movie.title,
+            placeholder = painterResource(id = R.drawable.baseline_local_movies_24),
+            error = painterResource(id = R.drawable.baseline_broken_image_24),
+            fallback = painterResource(id = R.drawable.baseline_local_movies_24)
         )
-
+        Text(
+            text = movie.title,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.labelMedium
+        )
     }
 }
 
