@@ -6,5 +6,6 @@ package com.vh.benedictcumberbatchmovies.presentation.mvi.intent
  */
 sealed class MovieDetailIntent {
     data class LoadMovie(val movieId: Int) : MovieDetailIntent()
-    object LoadSimilarMovies
+    data class LoadMovieAndSimilarMovies(val movieId: Int) : MovieDetailIntent()
+
 }

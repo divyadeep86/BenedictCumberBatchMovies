@@ -24,6 +24,11 @@ class GetMoviesUseCase(
             pagingData.map { it.toDomain() }
         }
 
+    fun getSimilarMovies(movieId: Int): Flow<PagingData<Movie>> =
+        repository.getSimilarMovies(movieId).map { pagingData ->
+            pagingData.map { it.toDomain() }
+        }
+
     /**
      * Detail call returns Flow<DataState<Movie>>
      */
@@ -36,6 +41,7 @@ class GetMoviesUseCase(
             else -> emit(DataState.Loading)
         }
     }
+
 
 }
 

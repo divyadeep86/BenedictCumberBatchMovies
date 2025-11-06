@@ -21,4 +21,13 @@ interface MovieApiService {
         @Path("movie_id") movieId: Int,
         @Query("language") language: String = "en-US"
     ): MovieDto
+
+    @GET("movie/{movie_id}/similar")
+    suspend fun getSimilarMovies(
+        @Path("movie_id") movieId: Int,
+        @Query("page") page: Int,
+        @Query("sort_by") sortBy: String = "popularity.desc",
+        @Query("language") language: String = "en-US",
+        @Query("include_adult") includeAdult: Boolean = false
+    ): MovieResponse
 }

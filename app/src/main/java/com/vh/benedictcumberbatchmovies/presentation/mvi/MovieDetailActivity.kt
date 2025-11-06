@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.vh.benedictcumberbatchmovies.presentation.mvi.intent.MovieDetailIntent
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,15 +20,26 @@ class MovieDetailActivity : ComponentActivity() {
 
         setContent {
             val state = viewModel.state.collectAsStateWithLifecycle().value
+            val similarMovies = viewModel.similarMovies.collectAsLazyPagingItems()
             MovieDetailScreen(
                 state = state,
+                similarMovies = similarMovies,
                 onBack = { onBackPressedDispatcher.onBackPressed() },
-                onRetry = { viewModel.handleIntent(MovieDetailIntent.LoadMovie(movieId)) }
+                onRetry = {
+                    viewModel.handleIntent(
+                        MovieDetailIntent.LoadMovieAndSimilarMovies(
+                            movieId
+                        )
+                    )
+                },
+                onItemClick = { movie ->
+                    viewModel.handleIntent(MovieDetailIntent.LoadMovieAndSimilarMovies(movie.id))
+                }
             )
         }
 
         if (movieId != -1) {
-            viewModel.handleIntent(MovieDetailIntent.LoadMovie(movieId))
+            viewModel.handleIntent(MovieDetailIntent.LoadMovieAndSimilarMovies(movieId))
         }
     }
 }

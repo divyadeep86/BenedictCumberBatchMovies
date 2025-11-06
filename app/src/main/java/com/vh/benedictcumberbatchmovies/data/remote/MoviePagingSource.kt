@@ -12,7 +12,9 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 class MoviePagingSource(
-    private val api: MovieApiService
+    private val api: MovieApiService,
+    private val loadSimilarMoviesById: Int = 0,
+
 ) : PagingSource<Int, MovieDto>() {
 
     override fun getRefreshKey(state: PagingState<Int, MovieDto>): Int? {
@@ -29,12 +31,16 @@ class MoviePagingSource(
         delay(1000L)
 
         return try {
-            val response = api.getMovies(page = page)
+            val response = if (loadSimilarMoviesById != 0) {
+                api.getSimilarMovies(movieId = loadSimilarMoviesById, page = page)
+            } else {
+                api.getMovies(page = page)
+            }
 
             // NOTE: adjust `totalPages` to your DTO field name (`total_pages` vs `totalPages`)
             val totalPages = response.totalPages  // <-- change to `totalPages` if that's your model
 
-            val nextKey = if (page < (totalPages ?: page)) page + 1 else null
+            val nextKey = if (page < totalPages) page + 1 else null
             LoadResult.Page(
                 data = response.results,
                 prevKey = if (page == 1) null else page - 1,

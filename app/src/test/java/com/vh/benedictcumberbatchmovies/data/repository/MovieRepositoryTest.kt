@@ -30,6 +30,14 @@ private class FakeApi : MovieApiService {
         movieId: Int,
         language: String
     ): MovieDto = fakeResponse()
+
+    override suspend fun getSimilarMovies(
+        movieId: Int,
+        page: Int,
+        sortBy: String,
+        language: String,
+        includeAdult: Boolean
+    ) = MovieResponse(page, emptyList(), 1)
 }
 
 

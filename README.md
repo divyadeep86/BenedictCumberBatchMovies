@@ -4,7 +4,7 @@ This is a small movie browser that lists **Benedict Cumberbatch** movies using t
 It demonstrates two common Android architectures **side-by-side**:
 
 - **MVVM** – Movie list screen using **XML + RecyclerView** and **Paging 3**
-- **MVI** – Movie detail screen using **Jetpack Compose**
+- **MVI** – Movie detail screen using **Jetpack Compose** (with a **Similar Movies** LazyRow)
 
 It’s intentionally hybrid to show how to bridge legacy XML screens with new Compose screens (a
 real-world scenario).
@@ -14,13 +14,14 @@ real-world scenario).
 ## 🎯 Features
 
 - Paginated list of Benedict Cumberbatch movies (`with_people=71580`)
-- Detail screen with poster, title, and overview
+- Detail screen with poster, title, overview
+- **Similar Movies** row (Compose **LazyRow**, rounded posters)
 - **Load state** + error handling with retry
 - **Hilt** for dependency injection
 - **Retrofit + Kotlinx Serialization**
 - **Coil** image loading
 - Example **unit tests**
-- Optional **debug delay** (`DEMO_DELAY_MS`) to show spinners per page
+- Optional **debug delay** (`delay(1000L)`) to show spinners per page
 
 ---
 
@@ -64,6 +65,9 @@ real-world scenario).
   `Flow<PagingData<Movie>>`; UI observes `LoadState` for spinner/retry.
 - **MVI (Detail):** Compose screen with intents (`MovieDetailIntent`) → `MovieDetailViewModel` →
   immutable `MovieDetailState` (`isLoading`, `movie`, `error`).
+- **Uses a single source of truth (SavedStateHandle["movie_id"]) to drive both:**
+    - Detail state (onEach + _state.update)
+    - Similar movies paging stream (collectAsLazyPagingItems())
 
 #### Why hybrid?
 
@@ -100,7 +104,7 @@ Paging integrates naturally with MVVM & RecyclerView; a single-item fetch (detai
     │ └─ usecase/ # GetMoviesUseCase
     └─ presentation/
     ├─ mvvm/ # Movie list (XML + RecyclerView + Paging)
-    └─ mvi/ # Movie detail (Compose + Intents + State)
+    └─ mvi/ # Movie detail (Compose + Intents + State + Similar movies row)
 ````
 
 ## 🧠 Error Handling
@@ -148,9 +152,10 @@ All API calls are wrapped in a unified `safeApiCall`, mapping exceptions to read
 
 ## 🚧 Challenges Encountered
 
-- **Paging tests** are heavy; kept to **smoke tests** with `PagingData.from(...)`.
-- **Coroutine timing** in tests; used test dispatchers + terminal state collection.
-- Centralized **error mapping** simplified VM logic and UI updates.
+- Paging tests are tricky, so we kept them simple with `PagingData.from(...)`.
+- Coroutine test timing can be confusing; we used test dispatchers and waited for the final state.
+- Centralizing error handling made the ViewModel and UI easier to work with.
+- Mixing XML and Compose works, but needs a bit of extra setup.
 
 ## 🧪 Testing
 

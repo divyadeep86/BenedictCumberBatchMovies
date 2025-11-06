@@ -27,6 +27,13 @@ class MovieRepository(
         ).flow
     }
 
+    fun getSimilarMovies(movieId: Int): Flow<PagingData<MovieDto>> {
+        return Pager(
+            config = PagingConfig(pageSize = 5, enablePlaceholders = false),
+            pagingSourceFactory = { MoviePagingSource(api, loadSimilarMoviesById = movieId) }
+        ).flow
+    }
+
 
     /**
      * Detail call wrapped with DataState and common exception handling.
